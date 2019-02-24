@@ -8,6 +8,9 @@ RSpec.describe OrderItem do
     it { should_not allow_value(nil).for(:order_id) }
     it { should_not allow_value(nil).for(:pizza_id) }
     it { should_not allow_value(nil).for(:quantity) }
+    it { should_not allow_value(0).for(:quantity) }
+    it { should_not allow_value(-1).for(:quantity) }
+    it { should allow_value(1).for(:quantity) }
   end
 
   specify 'associations' do
