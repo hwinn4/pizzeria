@@ -1,9 +1,8 @@
 class Api::OrdersController < ApplicationController
   def create
     order = Order.create
-
-    order_item_params[:order_items].each do |order_item_params|
-      order.order_items.build(pizza_id: order_item_params[:pizza_id], quantity: order_item_params[:quantity])
+    order_item_params[:order_items].each do |order_item_hash|
+      order.order_items.build(pizza_id: order_item_hash[:pizza_id], quantity: order_item_hash[:quantity])
     end
 
     if order.save
