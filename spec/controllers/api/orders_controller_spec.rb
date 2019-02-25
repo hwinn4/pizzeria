@@ -29,14 +29,16 @@ describe Api::OrdersController do
             {
               'quantity' => 1,
               'pizza' => {
-                'name' => margherita_pizza.name,
+                'id' => margherita_pizza.id,
+                'name' => margherita_pizza.name.titleize,
                 'price' => '%.2f' % margherita_pizza.price.amount
               }
             },
             {
                 'quantity' => 2,
                 'pizza' => {
-                    'name' => hawaiian_pizza.name,
+                    'id' => hawaiian_pizza.id,
+                    'name' => hawaiian_pizza.name.titleize,
                     'price' => '%.2f' % hawaiian_pizza.price.amount
                 }
             },
@@ -93,7 +95,7 @@ describe Api::OrdersController do
 
   describe '#index' do
     context 'when there are no orders in the database' do
-      it 'returns 200' do
+      it 'returns an empty array' do
         get :index
         expect(response.code).to eq('200')
         expect(JSON.parse(response.body)).to eq([])
@@ -120,14 +122,16 @@ describe Api::OrdersController do
                 {
                     'quantity' => 1,
                     'pizza' => {
-                        'name' => margherita_pizza.name,
+                        'id' => margherita_pizza.id,
+                        'name' => margherita_pizza.name.titleize,
                         'price' => '%.2f' % margherita_pizza.price.amount
                     }
                 },
                 {
                     'quantity' => 2,
                     'pizza' => {
-                        'name' => hawaiian_pizza.name,
+                        'id' => hawaiian_pizza.id,
+                        'name' => hawaiian_pizza.name.titleize,
                         'price' => '%.2f' % hawaiian_pizza.price.amount
                     }
                 },
@@ -141,14 +145,16 @@ describe Api::OrdersController do
                 {
                     'quantity' => 2,
                     'pizza' => {
-                        'name' => margherita_pizza.name,
+                        'id' => margherita_pizza.id,
+                        'name' => margherita_pizza.name.titleize,
                         'price' => '%.2f' % margherita_pizza.price.amount
                     }
                 },
                 {
                     'quantity' => 2,
                     'pizza' => {
-                        'name' => hawaiian_pizza.name,
+                        'id' => hawaiian_pizza.id,
+                        'name' => hawaiian_pizza.name.titleize,
                         'price' => '%.2f' % hawaiian_pizza.price.amount
                     }
                 },
