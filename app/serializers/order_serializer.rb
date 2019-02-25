@@ -4,6 +4,7 @@ class OrderSerializer < ActiveModel::Serializer
   has_many :order_items
 
   def total_price
-    '%.2f' % object.total_price.amount
+    price = object.total_price
+    price > 0 ? '%.2f' % object.total_price.amount : 0
   end
 end
