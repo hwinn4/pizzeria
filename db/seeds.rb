@@ -5,3 +5,7 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+Pizza.names.each do |name|
+  Pizza.find_or_create_by(name: name[0], price_cents: 1500)
+end
