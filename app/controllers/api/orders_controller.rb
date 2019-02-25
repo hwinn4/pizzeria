@@ -13,6 +13,10 @@ class Api::OrdersController < ApplicationController
     end
   end
 
+  def index
+    render json: Order.all, each_serializer: OrderSerializer
+  end
+
   private
 
   def order_item_params

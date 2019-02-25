@@ -3,10 +3,10 @@
 require 'rails_helper'
 
 describe Api::OrdersController do
-  describe '#create' do
-    let(:margherita_pizza) { FactoryBot.create(:pizza) }
-    let(:hawaiian_pizza) { FactoryBot.create(:pizza, name: Pizza.names[:hawaiian], price: Money.new(1700)) }
+  let(:margherita_pizza) { FactoryBot.create(:pizza) }
+  let(:hawaiian_pizza) { FactoryBot.create(:pizza, name: Pizza.names[:hawaiian], price: Money.new(1700)) }
 
+  describe '#create' do
     context 'when the order is successfully created' do
       let(:params) do
         {
@@ -22,28 +22,29 @@ describe Api::OrdersController do
         post :create, params: params
 
         expected_response = {
-          id: Order.first.id,
-          completed_on: nil,
-          order_items: [
+          'id' => Order.first.id,
+          'completed_on' => nil,
+          'total_price' => "49.00",
+          'order_items' => [
             {
-              quantity: 1,
-              pizza: {
-                name: margherita_pizza.name,
-                price: '%.2f' % margherita_pizza.price.amount
+              'quantity' => 1,
+              'pizza' => {
+                'name' => margherita_pizza.name,
+                'price' => '%.2f' % margherita_pizza.price.amount
               }
             },
             {
-                quantity: 2,
-                pizza: {
-                    name: hawaiian_pizza.name,
-                    price: '%.2f' % hawaiian_pizza.price.amount
+                'quantity' => 2,
+                'pizza' => {
+                    'name' => hawaiian_pizza.name,
+                    'price' => '%.2f' % hawaiian_pizza.price.amount
                 }
             },
 
           ]
         }
         expect(response.code).to eq('201')
-        expect(response.body).to eq(expected_response.to_json)
+        expect(JSON.parse(response.body)).to eq(expected_response)
       end
     end
 
@@ -86,6 +87,79 @@ describe Api::OrdersController do
           expect(response.code).to eq('400')
           expect(response.body).to eq(expected_response.to_json)
         end
+      end
+    end
+  end
+
+  describe '#index' do
+    context 'when there are no orders in the database' do
+      it 'returns 200' do
+        get :index
+        expect(response.code).to eq('200')
+        expect(JSON.parse(response.body)).to eq([])
+      end
+    end
+
+    context 'when there are orders in the database' do
+      # TODO: Review why use Factory Bot
+      it 'returns a list of orders including each order total price' do
+        # TODO: Why didn't let work outside of the example?
+        order = FactoryBot.create(:order)
+        FactoryBot.create(:order_item, pizza: margherita_pizza, order: order)
+        FactoryBot.create(:order_item, pizza: hawaiian_pizza, order: order, quantity: 2)
+
+        order2 = FactoryBot.create(:order)
+        FactoryBot.create(:order_item, pizza: margherita_pizza, order: order2, quantity: 2)
+        FactoryBot.create(:order_item, pizza: hawaiian_pizza, order: order2, quantity: 2)
+
+        expected_response = [{
+            'id' => order.id,
+            'completed_on' => nil,
+            'total_price' => "49.00",
+            'order_items' => [
+                {
+                    'quantity' => 1,
+                    'pizza' => {
+                        'name' => margherita_pizza.name,
+                        'price' => '%.2f' % margherita_pizza.price.amount
+                    }
+                },
+                {
+                    'quantity' => 2,
+                    'pizza' => {
+                        'name' => hawaiian_pizza.name,
+                        'price' => '%.2f' % hawaiian_pizza.price.amount
+                    }
+                },
+
+            ]
+        }, {
+            'id' => order2.id,
+            'completed_on' => nil,
+            'total_price' => "64.00",
+            'order_items' => [
+                {
+                    'quantity' => 2,
+                    'pizza' => {
+                        'name' => margherita_pizza.name,
+                        'price' => '%.2f' % margherita_pizza.price.amount
+                    }
+                },
+                {
+                    'quantity' => 2,
+                    'pizza' => {
+                        'name' => hawaiian_pizza.name,
+                        'price' => '%.2f' % hawaiian_pizza.price.amount
+                    }
+                },
+
+            ]
+        }]
+
+        get :index
+        # TODO: Run Rubocop
+        expect(response.code).to eq('200')
+        expect(JSON.parse(response.body)).to eq(expected_response)
       end
     end
   end

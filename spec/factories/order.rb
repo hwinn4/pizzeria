@@ -1,0 +1,5 @@
+FactoryBot.define do
+  factory :order, class: Order do
+    completed_on { nil }
+  end
+end
