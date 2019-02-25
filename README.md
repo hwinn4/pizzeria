@@ -23,6 +23,8 @@
         - returns an array of all available pizzas
     - `GET /api/orders`
         - returns an array of all orders with details about item orders
+    - `GET /api/orders/:id`
+        - returns the details of a single order
     - `POST /api/orders`
         - creates a new order
         - example JSON body:
