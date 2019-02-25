@@ -109,7 +109,6 @@ describe Api::OrdersController do
     end
 
     context 'when there are orders in the database' do
-      # TODO: Review why use Factory Bot
       it 'returns a list of orders including each order total price' do
         # TODO: Why didn't let work outside of the example?
         order = FactoryBot.create(:order)
@@ -169,7 +168,6 @@ describe Api::OrdersController do
         }]
 
         get :index
-        # TODO: Run Rubocop
         expect(response.code).to eq('200')
         expect(JSON.parse(response.body)).to eq(expected_response)
       end
