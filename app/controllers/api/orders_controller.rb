@@ -16,6 +16,14 @@ class Api::OrdersController < ApplicationController
     render json: Order.all, each_serializer: OrderSerializer
   end
 
+  def show
+    begin
+      render json: Order.find(params[:id])
+    rescue
+      render json: [], status: :not_found
+    end
+  end
+
   private
 
   def order_item_params

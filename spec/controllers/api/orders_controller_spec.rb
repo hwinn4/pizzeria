@@ -5,34 +5,31 @@ require 'rails_helper'
 describe Api::OrdersController do
   let(:margherita_pizza) { FactoryBot.create(:pizza) }
   let(:hawaiian_pizza) { FactoryBot.create(:pizza, name: Pizza.names[:hawaiian], price: Money.new(1700)) }
-
-  describe '#create' do
-    context 'when the order is successfully created' do
-      let(:params) do
-        {
-          "order" => {
+  # TODO: Should these be moved somewhere?
+  let(:valid_params) do
+    {
+        "order" => {
             "order_items" => [
-              { "pizza_id" => margherita_pizza.id, "quantity" => 1 },
-              { "pizza_id" => hawaiian_pizza.id, "quantity" => 2 }
+                { "pizza_id" => margherita_pizza.id, "quantity" => 1 },
+                { "pizza_id" => hawaiian_pizza.id, "quantity" => 2 }
             ]
-          }
         }
-      end
-      it 'returns 201' do
-        post :create, params: params
+    }
+  end
 
-        expected_response = {
-          "id" => Order.first.id,
-          "completed_on" => nil,
-          "total_price" => "49.00",
-          "order_items" => [
+  let(:expected_valid_response) do
+    {
+        "id" => Order.first.id,
+        "completed_on" => nil,
+        "total_price" => "49.00",
+        "order_items" => [
             {
-              "quantity" => 1,
-              "pizza" => {
-                "id" => margherita_pizza.id,
-                "name" => margherita_pizza.name.titleize,
-                "price" => "%.2f" % margherita_pizza.price.amount
-              }
+                "quantity" => 1,
+                "pizza" => {
+                    "id" => margherita_pizza.id,
+                    "name" => margherita_pizza.name.titleize,
+                    "price" => "%.2f" % margherita_pizza.price.amount
+                }
             },
             {
                 "quantity" => 2,
@@ -43,16 +40,23 @@ describe Api::OrdersController do
                 }
             },
 
-          ]
-        }
+        ]
+    }
+  end
+
+  describe '#create' do
+    context 'when the order is successfully created' do
+      it 'returns 201' do
+        post :create, params: valid_params
+
         expect(response.code).to eq('201')
-        expect(JSON.parse(response.body)).to eq(expected_response)
+        expect(JSON.parse(response.body)).to eq(expected_valid_response)
       end
     end
 
     context 'when the order cannot be created successfully' do
       context 'when a quantity is invalid' do
-        let(:params) do
+        let(:invalid_params) do
           {
             "order" => {
               "order_items" => [
@@ -63,7 +67,7 @@ describe Api::OrdersController do
           }
         end
         it 'returns 400' do
-          post :create, params: params
+          post :create, params: invalid_params
 
           expected_response = { order_items: ["is invalid"] }
           expect(response.code).to eq('400')
@@ -166,6 +170,24 @@ describe Api::OrdersController do
         # TODO: Run Rubocop
         expect(response.code).to eq('200')
         expect(JSON.parse(response.body)).to eq(expected_response)
+      end
+    end
+  end
+
+  describe '#show' do
+    context 'when the requested resource exists' do
+      it 'returns 200 and the requested data' do
+        post :create, params: valid_params
+        get :show, params: { id: JSON.parse(response.body)['id'] }
+
+        expect(JSON.parse(response.body)).to eq(expected_valid_response)
+      end
+    end
+
+    context 'when the requested resource is missing' do
+      it 'returns 404' do
+        get :show, params: { id: 1 }
+        expect(response.status).to eq(404)
       end
     end
   end
