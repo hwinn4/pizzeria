@@ -7,7 +7,7 @@ describe Api::OrdersController do
   let(:hawaiian_pizza) do
     FactoryBot.create(:pizza, name: Pizza.names[:hawaiian], price: Money.new(1700))
   end
-  # TODO: Should these be moved somewhere?
+
   let(:valid_params) do
     {
       'order' => {
@@ -19,9 +19,8 @@ describe Api::OrdersController do
     }
   end
 
-  let(:expected_valid_response) do
+  let(:valid_response) do
     {
-      'id' => Order.first.id,
       'completed_on' => nil,
       'total_price' => '49.00',
       'order_items' => [
@@ -41,7 +40,6 @@ describe Api::OrdersController do
             'price' => format('%.2f', hawaiian_pizza.price.amount)
           }
         }
-
       ]
     }
   end
@@ -51,6 +49,7 @@ describe Api::OrdersController do
       it 'returns 201' do
         post :create, params: valid_params
 
+        expected_valid_response = { 'id' => Order.first.id }.merge!(valid_response)
         expect(response.code).to eq('201')
         expect(JSON.parse(response.body)).to eq(expected_valid_response)
       end
@@ -110,66 +109,16 @@ describe Api::OrdersController do
 
     context 'when there are orders in the database' do
       it 'returns a list of orders including each order total price' do
-        # TODO: Why didn't let work outside of the example?
-        order = FactoryBot.create(:order)
-        FactoryBot.create(:order_item, pizza: margherita_pizza, order: order)
-        FactoryBot.create(:order_item, pizza: hawaiian_pizza, order: order, quantity: 2)
+        post :create, params: valid_params
+        post :create, params: valid_params
 
-        order2 = FactoryBot.create(:order)
-        FactoryBot.create(:order_item, pizza: margherita_pizza, order: order2, quantity: 2)
-        FactoryBot.create(:order_item, pizza: hawaiian_pizza, order: order2, quantity: 2)
-
-        expected_response = [{
-          'id' => order.id,
-          'completed_on' => nil,
-          'total_price' => '49.00',
-          'order_items' => [
-            {
-              'quantity' => 1,
-              'pizza' => {
-                'id' => margherita_pizza.id,
-                'name' => margherita_pizza.name.titleize,
-                'price' => format('%.2f', margherita_pizza.price.amount)
-              }
-            },
-            {
-              'quantity' => 2,
-              'pizza' => {
-                'id' => hawaiian_pizza.id,
-                'name' => hawaiian_pizza.name.titleize,
-                'price' => format('%.2f', hawaiian_pizza.price.amount)
-              }
-            }
-
-          ]
-        }, {
-          'id' => order2.id,
-          'completed_on' => nil,
-          'total_price' => '64.00',
-          'order_items' => [
-            {
-              'quantity' => 2,
-              'pizza' => {
-                'id' => margherita_pizza.id,
-                'name' => margherita_pizza.name.titleize,
-                'price' => format('%.2f', margherita_pizza.price.amount)
-              }
-            },
-            {
-              'quantity' => 2,
-              'pizza' => {
-                'id' => hawaiian_pizza.id,
-                'name' => hawaiian_pizza.name.titleize,
-                'price' => format('%.2f', hawaiian_pizza.price.amount)
-              }
-            }
-
-          ]
-        }]
+        order1 = { 'id' => Order.all.first.id }.merge!(valid_response)
+        order2 = { 'id' => Order.all.last.id }.merge!(valid_response)
+        expected_valid_response = [order1, order2]
 
         get :index
         expect(response.code).to eq('200')
-        expect(JSON.parse(response.body)).to eq(expected_response)
+        expect(JSON.parse(response.body)).to eq(expected_valid_response)
       end
     end
   end
@@ -180,6 +129,7 @@ describe Api::OrdersController do
         post :create, params: valid_params
         get :show, params: { id: JSON.parse(response.body)['id'] }
 
+        expected_valid_response = { 'id' => Order.first.id }.merge!(valid_response)
         expect(JSON.parse(response.body)).to eq(expected_valid_response)
       end
     end
