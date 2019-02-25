@@ -17,4 +17,22 @@
 * Start the server
     - `rails s`
     - point browser to `localhost:3000`
-
+    
+* Endpoints and Requests
+    - `GET /api/pizzas`
+        - returns an array of all available pizzas
+    - `GET /api/orders`
+        - returns an array of all orders with details about item orders
+    - `POST /api/orders`
+        - creates a new order
+        - example JSON body:
+        ```
+            {
+              "order" : {
+                  "order_items" : [
+                      { "pizza_id" : 1, "quantity" : 1 },
+                      { "pizza_id" : 2, "quantity" : 1 }
+                  ]
+              }
+            }
+        ```
