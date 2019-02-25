@@ -17,16 +17,16 @@ describe Api::PizzasController do
       let(:hawaiian_pizza) { FactoryBot.create(:pizza, name: Pizza.names[:hawaiian], price: Money.new(1700)) }
       it 'returns a list of all available pizzas' do
         expected_response = [
-            {
-                'id' => margherita_pizza.id,
-                'name' => margherita_pizza.name.titleize,
-                'price' => "15.00"
-            },
-            {
-                'id' => hawaiian_pizza.id,
-                'name' => hawaiian_pizza.name.titleize,
-                'price' => "17.00"
-            }
+          {
+            'id' => margherita_pizza.id,
+            'name' => margherita_pizza.name.titleize,
+            'price' => '15.00'
+          },
+          {
+            'id' => hawaiian_pizza.id,
+            'name' => hawaiian_pizza.name.titleize,
+            'price' => '17.00'
+          }
         ]
 
         get :index

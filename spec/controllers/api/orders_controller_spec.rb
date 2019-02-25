@@ -4,43 +4,45 @@ require 'rails_helper'
 
 describe Api::OrdersController do
   let(:margherita_pizza) { FactoryBot.create(:pizza) }
-  let(:hawaiian_pizza) { FactoryBot.create(:pizza, name: Pizza.names[:hawaiian], price: Money.new(1700)) }
+  let(:hawaiian_pizza) do
+    FactoryBot.create(:pizza, name: Pizza.names[:hawaiian], price: Money.new(1700))
+  end
   # TODO: Should these be moved somewhere?
   let(:valid_params) do
     {
-        "order" => {
-            "order_items" => [
-                { "pizza_id" => margherita_pizza.id, "quantity" => 1 },
-                { "pizza_id" => hawaiian_pizza.id, "quantity" => 2 }
-            ]
-        }
+      'order' => {
+        'order_items' => [
+          { 'pizza_id' => margherita_pizza.id, 'quantity' => 1 },
+          { 'pizza_id' => hawaiian_pizza.id, 'quantity' => 2 }
+        ]
+      }
     }
   end
 
   let(:expected_valid_response) do
     {
-        "id" => Order.first.id,
-        "completed_on" => nil,
-        "total_price" => "49.00",
-        "order_items" => [
-            {
-                "quantity" => 1,
-                "pizza" => {
-                    "id" => margherita_pizza.id,
-                    "name" => margherita_pizza.name.titleize,
-                    "price" => "%.2f" % margherita_pizza.price.amount
-                }
-            },
-            {
-                "quantity" => 2,
-                "pizza" => {
-                    "id" => hawaiian_pizza.id,
-                    "name" => hawaiian_pizza.name.titleize,
-                    "price" => '%.2f' % hawaiian_pizza.price.amount
-                }
-            },
+      'id' => Order.first.id,
+      'completed_on' => nil,
+      'total_price' => '49.00',
+      'order_items' => [
+        {
+          'quantity' => 1,
+          'pizza' => {
+            'id' => margherita_pizza.id,
+            'name' => margherita_pizza.name.titleize,
+            'price' => format('%.2f', margherita_pizza.price.amount)
+          }
+        },
+        {
+          'quantity' => 2,
+          'pizza' => {
+            'id' => hawaiian_pizza.id,
+            'name' => hawaiian_pizza.name.titleize,
+            'price' => format('%.2f', hawaiian_pizza.price.amount)
+          }
+        }
 
-        ]
+      ]
     }
   end
 
@@ -58,10 +60,10 @@ describe Api::OrdersController do
       context 'when a quantity is invalid' do
         let(:invalid_params) do
           {
-            "order" => {
-              "order_items" => [
-                { "pizza_id" => Pizza.names[:extra_cheese], "quantity" => 0 },
-                { "pizza_id" => Pizza.names[:hawaiian], "quantity" => 2 }
+            'order' => {
+              'order_items' => [
+                { 'pizza_id' => Pizza.names[:extra_cheese], 'quantity' => 0 },
+                { 'pizza_id' => Pizza.names[:hawaiian], 'quantity' => 2 }
               ]
             }
           }
@@ -69,7 +71,7 @@ describe Api::OrdersController do
         it 'returns 400' do
           post :create, params: invalid_params
 
-          expected_response = { order_items: ["is invalid"] }
+          expected_response = { order_items: ['is invalid'] }
           expect(response.code).to eq('400')
           expect(response.body).to eq(expected_response.to_json)
         end
@@ -78,18 +80,18 @@ describe Api::OrdersController do
       context 'when a pizza name is invalid' do
         let(:params) do
           {
-              "order" => {
-                  "order_items" => [
-                      { "pizza_id" => "invalid pizza id", "quantity" => 0 },
-                      { "pizza_id" => Pizza.names[:hawaiian], "quantity" => 2 }
-                  ]
-              }
+            'order' => {
+              'order_items' => [
+                { 'pizza_id' => 'invalid pizza id', 'quantity' => 0 },
+                { 'pizza_id' => Pizza.names[:hawaiian], 'quantity' => 2 }
+              ]
+            }
           }
         end
         it 'returns 400' do
           post :create, params: params
 
-          expected_response = { order_items: ["is invalid"] }
+          expected_response = { order_items: ['is invalid'] }
           expect(response.code).to eq('400')
           expect(response.body).to eq(expected_response.to_json)
         end
@@ -119,51 +121,51 @@ describe Api::OrdersController do
         FactoryBot.create(:order_item, pizza: hawaiian_pizza, order: order2, quantity: 2)
 
         expected_response = [{
-            "id" => order.id,
-            "completed_on" => nil,
-            "total_price" => "49.00",
-            "order_items" => [
-                {
-                    "quantity" => 1,
-                    "pizza" => {
-                        "id" => margherita_pizza.id,
-                        "name" => margherita_pizza.name.titleize,
-                        "price" => "%.2f" % margherita_pizza.price.amount
-                    }
-                },
-                {
-                    "quantity" => 2,
-                    "pizza" => {
-                        "id" => hawaiian_pizza.id,
-                        "name" => hawaiian_pizza.name.titleize,
-                        "price" => "%.2f" % hawaiian_pizza.price.amount
-                    }
-                },
+          'id' => order.id,
+          'completed_on' => nil,
+          'total_price' => '49.00',
+          'order_items' => [
+            {
+              'quantity' => 1,
+              'pizza' => {
+                'id' => margherita_pizza.id,
+                'name' => margherita_pizza.name.titleize,
+                'price' => format('%.2f', margherita_pizza.price.amount)
+              }
+            },
+            {
+              'quantity' => 2,
+              'pizza' => {
+                'id' => hawaiian_pizza.id,
+                'name' => hawaiian_pizza.name.titleize,
+                'price' => format('%.2f', hawaiian_pizza.price.amount)
+              }
+            }
 
-            ]
+          ]
         }, {
-            "id" => order2.id,
-            "completed_on" => nil,
-            "total_price" => "64.00",
-            "order_items" => [
-                {
-                    "quantity" => 2,
-                    "pizza" => {
-                        "id" => margherita_pizza.id,
-                        "name" => margherita_pizza.name.titleize,
-                        "price" => "%.2f" % margherita_pizza.price.amount
-                    }
-                },
-                {
-                    "quantity" => 2,
-                    "pizza" => {
-                        "id" => hawaiian_pizza.id,
-                        "name" => hawaiian_pizza.name.titleize,
-                        "price" => '%.2f' % hawaiian_pizza.price.amount
-                    }
-                },
+          'id' => order2.id,
+          'completed_on' => nil,
+          'total_price' => '64.00',
+          'order_items' => [
+            {
+              'quantity' => 2,
+              'pizza' => {
+                'id' => margherita_pizza.id,
+                'name' => margherita_pizza.name.titleize,
+                'price' => format('%.2f', margherita_pizza.price.amount)
+              }
+            },
+            {
+              'quantity' => 2,
+              'pizza' => {
+                'id' => hawaiian_pizza.id,
+                'name' => hawaiian_pizza.name.titleize,
+                'price' => format('%.2f', hawaiian_pizza.price.amount)
+              }
+            }
 
-            ]
+          ]
         }]
 
         get :index
