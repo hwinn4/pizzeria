@@ -62,8 +62,8 @@ describe Api::OrdersController do
           {
             'order' => {
               'order_items' => [
-                { 'pizza_id' => Pizza.names[:extra_cheese], 'quantity' => 0 },
-                { 'pizza_id' => Pizza.names[:hawaiian], 'quantity' => 2 }
+                { 'pizza_id' => margherita_pizza.id, 'quantity' => 0 },
+                { 'pizza_id' => hawaiian_pizza.id, 'quantity' => 2 }
               ]
             }
           }
@@ -71,7 +71,7 @@ describe Api::OrdersController do
         it 'returns 400' do
           post :create, params: invalid_params
 
-          expected_response = { order_items: ['is invalid'] }
+          expected_response = { errors: { order_items: [{quantity: ['must be greater than 0'] }] } }
           expect(response.code).to eq('400')
           expect(response.body).to eq(expected_response.to_json)
         end
@@ -82,8 +82,8 @@ describe Api::OrdersController do
           {
             'order' => {
               'order_items' => [
-                { 'pizza_id' => 'invalid pizza id', 'quantity' => 0 },
-                { 'pizza_id' => Pizza.names[:hawaiian], 'quantity' => 2 }
+                { 'pizza_id' => 0, 'quantity' => 1 },
+                { 'pizza_id' => margherita_pizza.id, 'quantity' => 2 }
               ]
             }
           }
@@ -91,7 +91,7 @@ describe Api::OrdersController do
         it 'returns 400' do
           post :create, params: params
 
-          expected_response = { order_items: ['is invalid'] }
+          expected_response = { errors: { order_items: [{ pizza: ['must exist'] }] } }
           expect(response.code).to eq('400')
           expect(response.body).to eq(expected_response.to_json)
         end
