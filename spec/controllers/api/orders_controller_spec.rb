@@ -10,10 +10,10 @@ describe Api::OrdersController do
     context 'when the order is successfully created' do
       let(:params) do
         {
-          order: {
-            order_items: [
-              { pizza_id: margherita_pizza.id, quantity: 1 },
-              { pizza_id: hawaiian_pizza.id, quantity: 2 }
+          "order" => {
+            "order_items" => [
+              { "pizza_id" => margherita_pizza.id, "quantity" => 1 },
+              { "pizza_id" => hawaiian_pizza.id, "quantity" => 2 }
             ]
           }
         }
@@ -22,24 +22,24 @@ describe Api::OrdersController do
         post :create, params: params
 
         expected_response = {
-          'id' => Order.first.id,
-          'completed_on' => nil,
-          'total_price' => "49.00",
-          'order_items' => [
+          "id" => Order.first.id,
+          "completed_on" => nil,
+          "total_price" => "49.00",
+          "order_items" => [
             {
-              'quantity' => 1,
-              'pizza' => {
-                'id' => margherita_pizza.id,
-                'name' => margherita_pizza.name.titleize,
-                'price' => '%.2f' % margherita_pizza.price.amount
+              "quantity" => 1,
+              "pizza" => {
+                "id" => margherita_pizza.id,
+                "name" => margherita_pizza.name.titleize,
+                "price" => "%.2f" % margherita_pizza.price.amount
               }
             },
             {
-                'quantity' => 2,
-                'pizza' => {
-                    'id' => hawaiian_pizza.id,
-                    'name' => hawaiian_pizza.name.titleize,
-                    'price' => '%.2f' % hawaiian_pizza.price.amount
+                "quantity" => 2,
+                "pizza" => {
+                    "id" => hawaiian_pizza.id,
+                    "name" => hawaiian_pizza.name.titleize,
+                    "price" => '%.2f' % hawaiian_pizza.price.amount
                 }
             },
 
@@ -54,10 +54,10 @@ describe Api::OrdersController do
       context 'when a quantity is invalid' do
         let(:params) do
           {
-            order: {
-              order_items: [
-                { pizza_id: Pizza.names[:extra_cheese], quantity: 0 },
-                { pizza_id: Pizza.names[:hawaiian], quantity: 2 }
+            "order" => {
+              "order_items" => [
+                { "pizza_id" => Pizza.names[:extra_cheese], "quantity" => 0 },
+                { "pizza_id" => Pizza.names[:hawaiian], "quantity" => 2 }
               ]
             }
           }
@@ -74,10 +74,10 @@ describe Api::OrdersController do
       context 'when a pizza name is invalid' do
         let(:params) do
           {
-              order: {
-                  order_items: [
-                      { pizza_id: 'invalid pizza name', quantity: 0 },
-                      { pizza_id: Pizza.names[:hawaiian], quantity: 2 }
+              "order" => {
+                  "order_items" => [
+                      { "pizza_id" => "invalid pizza id", "quantity" => 0 },
+                      { "pizza_id" => Pizza.names[:hawaiian], "quantity" => 2 }
                   ]
               }
           }
@@ -115,47 +115,47 @@ describe Api::OrdersController do
         FactoryBot.create(:order_item, pizza: hawaiian_pizza, order: order2, quantity: 2)
 
         expected_response = [{
-            'id' => order.id,
-            'completed_on' => nil,
-            'total_price' => "49.00",
-            'order_items' => [
+            "id" => order.id,
+            "completed_on" => nil,
+            "total_price" => "49.00",
+            "order_items" => [
                 {
-                    'quantity' => 1,
-                    'pizza' => {
-                        'id' => margherita_pizza.id,
-                        'name' => margherita_pizza.name.titleize,
-                        'price' => '%.2f' % margherita_pizza.price.amount
+                    "quantity" => 1,
+                    "pizza" => {
+                        "id" => margherita_pizza.id,
+                        "name" => margherita_pizza.name.titleize,
+                        "price" => "%.2f" % margherita_pizza.price.amount
                     }
                 },
                 {
-                    'quantity' => 2,
-                    'pizza' => {
-                        'id' => hawaiian_pizza.id,
-                        'name' => hawaiian_pizza.name.titleize,
-                        'price' => '%.2f' % hawaiian_pizza.price.amount
+                    "quantity" => 2,
+                    "pizza" => {
+                        "id" => hawaiian_pizza.id,
+                        "name" => hawaiian_pizza.name.titleize,
+                        "price" => "%.2f" % hawaiian_pizza.price.amount
                     }
                 },
 
             ]
         }, {
-            'id' => order2.id,
-            'completed_on' => nil,
-            'total_price' => "64.00",
-            'order_items' => [
+            "id" => order2.id,
+            "completed_on" => nil,
+            "total_price" => "64.00",
+            "order_items" => [
                 {
-                    'quantity' => 2,
-                    'pizza' => {
-                        'id' => margherita_pizza.id,
-                        'name' => margherita_pizza.name.titleize,
-                        'price' => '%.2f' % margherita_pizza.price.amount
+                    "quantity" => 2,
+                    "pizza" => {
+                        "id" => margherita_pizza.id,
+                        "name" => margherita_pizza.name.titleize,
+                        "price" => "%.2f" % margherita_pizza.price.amount
                     }
                 },
                 {
-                    'quantity' => 2,
-                    'pizza' => {
-                        'id' => hawaiian_pizza.id,
-                        'name' => hawaiian_pizza.name.titleize,
-                        'price' => '%.2f' % hawaiian_pizza.price.amount
+                    "quantity" => 2,
+                    "pizza" => {
+                        "id" => hawaiian_pizza.id,
+                        "name" => hawaiian_pizza.name.titleize,
+                        "price" => '%.2f' % hawaiian_pizza.price.amount
                     }
                 },
 
