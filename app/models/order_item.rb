@@ -9,7 +9,6 @@ class OrderItem < ApplicationRecord
   validates :quantity, numericality: { greater_than: 0,  :only_integer => true }
 
   def price
-    # TODO: Test!
     pizza.price * quantity
   end
 end
