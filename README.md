@@ -13,6 +13,7 @@
 
 * How to run the test suite
     - `rspec spec`
+    - for continuously run tests: `bundle exec guard` (then make some changes in watched files!)
     
 * Start the server
     - `rails s`
