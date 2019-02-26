@@ -30,11 +30,12 @@
         - creates a new order
         - example JSON body:
         ```
+            # if using seed data, integers 1-7 are valid values for pizza_id            
             {
               "order" : {
                   "order_items" : [
-                      { "pizza_id" : 1, "quantity" : 1 },
-                      { "pizza_id" : 2, "quantity" : 1 }
+                      { "pizza_id" : 1, "quantity" : 1 }, # quantity must be integer > 0
+                      { "pizza_id" : 2, "quantity" : 1 } 
                   ]
               }
             }
