@@ -6,7 +6,7 @@ class OrderItem < ApplicationRecord
 
   validates_presence_of :order_id
   validates_presence_of :pizza_id
-  validates :quantity, numericality: { greater_than: 0 }
+  validates :quantity, numericality: { greater_than: 0,  :only_integer => true }
 
   def price
     # TODO: Test!
