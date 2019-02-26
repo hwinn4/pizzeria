@@ -14,7 +14,7 @@ describe Api::PizzasController do
 
     context 'when there are pizzas' do
       let(:margherita_pizza) { FactoryBot.create(:pizza) }
-      let(:hawaiian_pizza) { FactoryBot.create(:pizza, name: Pizza.names[:hawaiian], price: Money.new(1700)) }
+      let(:hawaiian_pizza) { FactoryBot.create(:pizza, name: Pizza.names[:hawaiian], price: Money.new(17_00)) }
       it 'returns a list of all available pizzas' do
         expected_response = [
           {

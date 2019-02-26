@@ -5,7 +5,7 @@ require 'rails_helper'
 describe Api::OrdersController do
   let(:margherita_pizza) { FactoryBot.create(:pizza) }
   let(:hawaiian_pizza) do
-    FactoryBot.create(:pizza, name: Pizza.names[:hawaiian], price: Money.new(1700))
+    FactoryBot.create(:pizza, name: Pizza.names[:hawaiian], price: Money.new(17_00))
   end
 
   let(:valid_params) do

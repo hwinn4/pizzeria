@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Pizza do
-  subject { Pizza.new(name: Pizza.names[:margherita], price_cents: 1500) }
+  subject { Pizza.new(name: Pizza.names[:margherita], price_cents: 15_00) }
 
   describe 'validations' do
     it { should validate_numericality_of(:price_cents) }
