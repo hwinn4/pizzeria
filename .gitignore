@@ -30,6 +30,5 @@
 /config/master.key
 
 .env
-/.idea/
 database.yml
 .idea
