@@ -25,6 +25,7 @@ describe Api::OrdersController do
       'total_price' => '49.00',
       'order_items' => [
         {
+          'id' => anything,
           'quantity' => 1,
           'pizza' => {
             'id' => margherita_pizza.id,
@@ -33,6 +34,7 @@ describe Api::OrdersController do
           }
         },
         {
+          'id' => anything,
           'quantity' => 2,
           'pizza' => {
             'id' => hawaiian_pizza.id,
@@ -51,7 +53,7 @@ describe Api::OrdersController do
 
         expected_valid_response = { 'id' => Order.first.id }.merge!(valid_response)
         expect(response.code).to eq('201')
-        expect(JSON.parse(response.body)).to eq(expected_valid_response)
+        expect(JSON.parse(response.body)).to include(expected_valid_response)
       end
     end
 
@@ -70,7 +72,13 @@ describe Api::OrdersController do
         it 'returns 400' do
           post :create, params: invalid_params
 
-          expected_response = { errors: { order_items: [{quantity: ['must be greater than 0'] }] } }
+          expected_response = {
+            errors: {
+              order_items: [{
+                quantity: ['must be greater than 0']
+              }]
+            }
+          }
           expect(response.code).to eq('400')
           expect(response.body).to eq(expected_response.to_json)
         end
@@ -90,7 +98,13 @@ describe Api::OrdersController do
         it 'returns 400' do
           post :create, params: params
 
-          expected_response = { errors: { order_items: [{ pizza: ['must exist'] }] } }
+          expected_response = {
+            errors: {
+              order_items: [{
+                pizza: ['must exist']
+              }]
+            }
+          }
           expect(response.code).to eq('400')
           expect(response.body).to eq(expected_response.to_json)
         end
@@ -114,11 +128,13 @@ describe Api::OrdersController do
 
         order1 = { 'id' => Order.all.first.id }.merge!(valid_response)
         order2 = { 'id' => Order.all.last.id }.merge!(valid_response)
-        expected_valid_response = [order1, order2]
 
         get :index
         expect(response.code).to eq('200')
-        expect(JSON.parse(response.body)).to eq(expected_valid_response)
+        expect(JSON.parse(response.body).size).to eq(2)
+        expect(JSON.parse(response.body).first).to include(order1)
+        expect(JSON.parse(response.body).last).to include(order2)
+
       end
     end
   end
@@ -130,7 +146,7 @@ describe Api::OrdersController do
         get :show, params: { id: JSON.parse(response.body)['id'] }
 
         expected_valid_response = { 'id' => Order.first.id }.merge!(valid_response)
-        expect(JSON.parse(response.body)).to eq(expected_valid_response)
+        expect(JSON.parse(response.body)).to include(expected_valid_response)
       end
     end
 

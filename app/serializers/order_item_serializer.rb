@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class OrderItemSerializer < ActiveModel::Serializer
-  attributes :quantity
+  attributes :id, :quantity
 
   belongs_to :pizza
 end
