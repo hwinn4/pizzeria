@@ -7,8 +7,12 @@
     - `bundle install`
 
 * Postgres Database setup
-    - add your `username` and `password` to `database.yml`
+    - to configure `database.yml`: create an .env file and define 
+        - `DATABASE_USERNAME`
+        - `DATABASE_PASSWORD`
+    
     - create a Postgres database called `pizzeria_development`
+    - create another called `pizzeria_test`
     - `rails db:seed` to populate a table of pizzas (all pizzas cost $15!)
 
 * How to run the test suite
